@@ -16,10 +16,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
+import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.TextField;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -33,6 +38,8 @@ public class SimpleCalculator implements EntryPoint {
 			+ "attempting to contact the server. Please check your network "
 			+ "connection and try again.";
 
+	private CalculatorView mCalculatorView;
+	
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting service.
 	 */
@@ -153,8 +160,12 @@ public class SimpleCalculator implements EntryPoint {
 		sendButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
 		
+		// ---
+		
+		RootPanel root = RootPanel.get();
+		
 		TextButton textButton = new TextButton("Verify GXT Works");
-		RootPanel.get().add(textButton);
+		root.add(textButton);
 		textButton.addSelectHandler(new SelectHandler() {
 		  @Override
 		  public void onSelect(SelectEvent event) {
@@ -162,5 +173,13 @@ public class SimpleCalculator implements EntryPoint {
 		    messageBox.show();
 		  }
 		});
+		
+		
+	    mCalculatorView = new CalculatorView();
+	    root.add(mCalculatorView.CreateView());
 	}
+	
+	
+	
+	
 }
