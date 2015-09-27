@@ -16,6 +16,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -148,5 +152,15 @@ public class SimpleCalculator implements EntryPoint {
 		MyHandler handler = new MyHandler();
 		sendButton.addClickHandler(handler);
 		nameField.addKeyUpHandler(handler);
+		
+		TextButton textButton = new TextButton("Verify GXT Works");
+		RootPanel.get().add(textButton);
+		textButton.addSelectHandler(new SelectHandler() {
+		  @Override
+		  public void onSelect(SelectEvent event) {
+		    MessageBox messageBox = new MessageBox("GXT Works.");
+		    messageBox.show();
+		  }
+		});
 	}
 }

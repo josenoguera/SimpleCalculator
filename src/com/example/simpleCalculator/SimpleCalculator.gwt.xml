@@ -12,12 +12,13 @@
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
-  <inherits name='com.google.gwt.user.theme.clean.Clean'/>
+  <!-- <inherits name='com.google.gwt.user.theme.clean.Clean'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
   <!-- Other module inherits                                      -->
+ <inherits name='com.sencha.gxt.ui.GXT' />
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.example.simpleCalculator.client.SimpleCalculator'/>
@@ -28,4 +29,8 @@
 
   <!-- allow Super Dev Mode -->
   <add-linker name="xsiframe"/>
+  
+  <!-- GXT Stylesheet -->
+  <stylesheet src="reset.css" />
+
 </module>
