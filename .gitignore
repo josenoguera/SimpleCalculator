@@ -2,3 +2,4 @@ gwt-unitCache/
 war/simplecalculator/
 war/WEB-INF/deploy/
 war/WEB-INF/classes/
+.gwt/

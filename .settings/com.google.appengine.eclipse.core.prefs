@@ -4,3 +4,4 @@ gaeDatanucleusVersion=v2
 gaeHrdEnabled=true
 googleCloudSqlEnabled=false
 localDevMySqlEnabled=true
+ormEnhancementInclusions=src/com/example/simpleCalculator/server/Conversion.java|src/
