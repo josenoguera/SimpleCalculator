@@ -6,15 +6,6 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
 
   <!-- Servlets -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.example.simpleCalculator.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/simplecalculator/greet</url-pattern>
-  </servlet-mapping>
   
   <servlet>
     <servlet-name>convertServlet</servlet-name>

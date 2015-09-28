@@ -41,6 +41,7 @@ public class ConvertServiceImpl extends RemoteServiceServlet implements ConvertS
 		List<ConversionClient> history = new ArrayList<ConversionClient>();
 		try {
 			String query = "select from " + Conversion.class.getName() + " order by timestamp";
+			@SuppressWarnings("unchecked")
 			List<Conversion> list = (List<Conversion>) pm.newQuery(query).execute();
 			
 			SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd hh:mm:ss.SSS");

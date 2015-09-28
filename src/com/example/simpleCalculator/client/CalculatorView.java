@@ -241,31 +241,47 @@ public class CalculatorView {
 		@Override
 		public void onSelect(SelectEvent event) {
 			
+			if(mHistoryFrame != null) {
+				mHistoryFrame.removeFromParent();
+				mHistoryFrame = null;
+			}
+			
+			mHistoryFrame = new FramedPanel();
+			mHistoryFrame.setButtonAlign(BoxLayoutPack.CENTER); // Center
+			mHistoryFrame.setHeadingText("Conversion history");
+			mHistoryFrame.setPixelSize(300, 330);
+			mHistoryFrame.addStyleName("white-bg");
+			mHistoryFrame.add(new HTML());
+			mHistoryFrame.getElement().setMargins(new Margins(5));
+			
 			mConvertService.getHistory(new AsyncCallback<List<ConversionClient>>() {
 				public void onFailure(Throwable caught) {
 					// Show the RPC error message to the user
-					System.out.println("Remote Procedure Call - Failure");
+					TextArea text = new TextArea();
+					text.setText("Remote Procedure Call - Failure");
+					text.setPixelSize(280, 20);
+					text.setAllowTextSelection(false);
+					text.setPreventScrollbars(true);
+					mHistoryFrame.setWidget(text);
+					
+					FlowLayoutContainer container = new FlowLayoutContainer();
+					container.add(mHistoryFrame);
+					
+					// Add the widgets to the root panel.
+					RootPanel.get().add(container);
 				}
 
 				public void onSuccess(List<ConversionClient> result) {
 					
-					if(mHistoryFrame != null) {
-						mHistoryFrame.removeFromParent();
-						mHistoryFrame = null;
-					}
-					
 					VerticalPanel vertical = new VerticalPanel();
-					//vertical.setPixelSize(300, 330);
 					
 					for(ConversionClient conv : result) {
 						TextArea text = new TextArea();
 						text.setText(conv.toString());
-						text.setPixelSize(300, 20);
+						text.setPixelSize(280, 20);
 						text.setAllowTextSelection(false);
 						text.setPreventScrollbars(true);
 						vertical.add(text);
-						
-						System.out.println(conv.toString());
 					}
 
 					//create scrollpanel with content
@@ -273,13 +289,6 @@ public class CalculatorView {
 					scrollPanel.setSize("800px", "330px");
 					scrollPanel.add(vertical);
 
-					mHistoryFrame = new FramedPanel();
-					mHistoryFrame.setButtonAlign(BoxLayoutPack.CENTER); // Center
-					mHistoryFrame.setHeadingText("Conversion history");
-					mHistoryFrame.setPixelSize(300, 330);
-					mHistoryFrame.addStyleName("white-bg");
-					mHistoryFrame.add(new HTML());
-					mHistoryFrame.getElement().setMargins(new Margins(5));
 					mHistoryFrame.setWidget(scrollPanel);
 					
 					FlowLayoutContainer container = new FlowLayoutContainer();
