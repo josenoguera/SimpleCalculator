@@ -1,14 +1,16 @@
 package com.example.simpleCalculator.server;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.Query;
 
 import com.example.simpleCalculator.client.ConvertService;
+import com.example.simpleCalculator.client.model.ConversionClient;
+import com.example.simpleCalculator.server.model.Conversion;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class ConvertServiceImpl extends RemoteServiceServlet implements ConvertService {
@@ -34,18 +36,16 @@ public class ConvertServiceImpl extends RemoteServiceServlet implements ConvertS
 		return conv.getBinary();
 	}
 	
-	public String[] getHistory() throws IllegalArgumentException {
+	public List<ConversionClient> getHistory() throws IllegalArgumentException {
 		PersistenceManager pm = getPersistenceManager();
-		List<String> history = new ArrayList<String>();
+		List<ConversionClient> history = new ArrayList<ConversionClient>();
 		try {
-			Query q = pm.newQuery(Conversion.class, "");
-			q.declareParameters("com.google.appengine.api.users.User u");
-			q.setOrdering("timestamp");
+			String query = "select from " + Conversion.class.getName() + " order by timestamp";
+			List<Conversion> list = (List<Conversion>) pm.newQuery(query).execute();
 			
-			@SuppressWarnings("unchecked")
-			List<Conversion> list = (List<Conversion>) q.execute();
-			for (Conversion conv : list) {
-				history.add(String.format("%s: %s -> %s", conv.getTimestamp(), conv.getDecimal(), conv.getBinary()));
+			SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd hh:mm:ss.SSS");
+			for(Conversion conv : list) {
+				history.add(new ConversionClient(format.format(conv.getTimestamp()), conv.getDecimal(), conv.getBinary()));
 			}
 		} 
 		catch(Exception e) {
@@ -55,7 +55,7 @@ public class ConvertServiceImpl extends RemoteServiceServlet implements ConvertS
 			pm.close();
 		}
 
-		return (String[]) history.toArray(new String[0]);
+		return history;
 	}
 	
 	private PersistenceManager getPersistenceManager() {

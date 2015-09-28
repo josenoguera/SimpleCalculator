@@ -1,5 +1,6 @@
-package com.example.simpleCalculator.server;
+package com.example.simpleCalculator.server.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -40,6 +41,14 @@ public class Conversion {
 
 	public Date getTimestamp() {
 		return this.timestamp;
+	}
+	 
+	@Override
+	public String toString() {
+		SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd hh:mm:ss.SSS");
+		String dateString = format.format(this.timestamp);
+		
+		return new String("\"" + dateString + "\"" + this.getDecimal() + "\"" + this.getBinary());
 	}
 	
 	private String convertToBinary(String decimal) {

@@ -1,18 +1,24 @@
 package com.example.simpleCalculator.client;
 
+import java.util.List;
+
+import com.example.simpleCalculator.client.model.ConversionClient;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
-import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
 public class CalculatorView {
@@ -24,6 +30,8 @@ public class CalculatorView {
 	private boolean mClearScreen = true;
 	private boolean mClickNumber = false;
 	private boolean mCanOperate = false;
+	
+	FramedPanel mHistoryFrame = null;
 	
 	/**
 	 * Create a remote service proxy to talk to the server-side Convert service.
@@ -74,9 +82,9 @@ public class CalculatorView {
 		vertical.add(horizontal);
 		
 		horizontal = new HorizontalPanel();
-		TextButton b = new TextButton("Convert to binary", mConvertHandler);
-		b.setSize("100", kSIZE);
-		horizontal.add(b);
+		TextButton binaryButton = new TextButton("Convert to binary", mConvertHandler);
+		binaryButton.setSize("100", kSIZE);
+		horizontal.add(binaryButton);
 		mDisplayBinary = new TextField();
 		mDisplayBinary.setEnabled(false);
 		mDisplayBinary.setSize("100", kSIZE);
@@ -84,16 +92,22 @@ public class CalculatorView {
 		horizontal.add(mDisplayBinary);
 		vertical.add(horizontal);
 		
+		horizontal = new HorizontalPanel();
+		TextButton historyButton = new TextButton("Show conversion history", mHistoryHandler);
+		historyButton.setSize("200", kSIZE);
+		horizontal.add(historyButton);
+		vertical.add(horizontal);
+		
 		FramedPanel frame = new FramedPanel();
 		frame.setButtonAlign(BoxLayoutPack.CENTER); // Center
 		frame.setHeadingText("Simple Calculator");
-		frame.setPixelSize(220, 290);
+		frame.setPixelSize(220, 330);
 		frame.addStyleName("white-bg");
 		frame.add(new HTML());
 		frame.getElement().setMargins(new Margins(5));
 		frame.setWidget(vertical);
 		
-		CenterLayoutContainer container = new CenterLayoutContainer();
+		FlowLayoutContainer container = new FlowLayoutContainer();
 		container.add(frame);
 		
 		return container;
@@ -218,6 +232,61 @@ public class CalculatorView {
 
 				public void onSuccess(String result) {
 					mDisplayBinary.setValue(result);
+				}
+			});
+		}
+	};
+	
+	private SelectHandler mHistoryHandler = new SelectHandler() {
+		@Override
+		public void onSelect(SelectEvent event) {
+			
+			mConvertService.getHistory(new AsyncCallback<List<ConversionClient>>() {
+				public void onFailure(Throwable caught) {
+					// Show the RPC error message to the user
+					System.out.println("Remote Procedure Call - Failure");
+				}
+
+				public void onSuccess(List<ConversionClient> result) {
+					
+					if(mHistoryFrame != null) {
+						mHistoryFrame.removeFromParent();
+						mHistoryFrame = null;
+					}
+					
+					VerticalPanel vertical = new VerticalPanel();
+					//vertical.setPixelSize(300, 330);
+					
+					for(ConversionClient conv : result) {
+						TextArea text = new TextArea();
+						text.setText(conv.toString());
+						text.setPixelSize(300, 20);
+						text.setAllowTextSelection(false);
+						text.setPreventScrollbars(true);
+						vertical.add(text);
+						
+						System.out.println(conv.toString());
+					}
+
+					//create scrollpanel with content
+					ScrollPanel scrollPanel = new ScrollPanel();
+					scrollPanel.setSize("800px", "330px");
+					scrollPanel.add(vertical);
+
+					mHistoryFrame = new FramedPanel();
+					mHistoryFrame.setButtonAlign(BoxLayoutPack.CENTER); // Center
+					mHistoryFrame.setHeadingText("Conversion history");
+					mHistoryFrame.setPixelSize(300, 330);
+					mHistoryFrame.addStyleName("white-bg");
+					mHistoryFrame.add(new HTML());
+					mHistoryFrame.getElement().setMargins(new Margins(5));
+					mHistoryFrame.setWidget(scrollPanel);
+					
+					FlowLayoutContainer container = new FlowLayoutContainer();
+					container.add(mHistoryFrame);
+					
+					// Add the widgets to the root panel.
+					RootPanel.get().add(container);
 				}
 			});
 		}
