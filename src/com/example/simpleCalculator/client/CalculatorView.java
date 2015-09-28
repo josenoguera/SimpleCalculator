@@ -8,16 +8,20 @@ import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
-import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
 public class CalculatorView {
 	
+	private final String kSIZE = "40";
+	
 	private TextField mScreen;
 	private Calculator mCalculator = new Calculator();
 	private boolean mClearScreen = true;
+	private boolean mClickNumber = false;
+	private boolean mCanOperate = false;
 	
 	public Widget CreateView() {
 
@@ -25,7 +29,7 @@ public class CalculatorView {
 		
 		mScreen = new TextField();
 		mScreen.setEnabled(false);
-		mScreen.setSize("200", "40");
+		mScreen.setSize("200", kSIZE);
 		mScreen.setValue("0");
 		vertical.add(mScreen);
 				
@@ -65,13 +69,13 @@ public class CalculatorView {
 		FramedPanel frame = new FramedPanel();
 		frame.setButtonAlign(BoxLayoutPack.CENTER); // Center
 		frame.setHeadingText("Simple Calculator");
-		frame.setPixelSize(250, 250);
+		frame.setPixelSize(220, 250);
 		frame.addStyleName("white-bg");
 		frame.add(new HTML());
 		frame.getElement().setMargins(new Margins(5));
 		frame.setWidget(vertical);
 		
-		FlowLayoutContainer container = new FlowLayoutContainer();
+		CenterLayoutContainer container = new CenterLayoutContainer();
 		container.add(frame);
 		
 		return container;
@@ -81,7 +85,6 @@ public class CalculatorView {
 		@Override
 		public void onSelect(SelectEvent event) {
 			String buttonText = ((TextButton)event.getSource()).getText();
-			double result=0;
 			
 			boolean isNumber = true;
 			try {
@@ -101,12 +104,16 @@ public class CalculatorView {
 					mScreen.setValue(displayText + buttonText);
 				}
 				mClearScreen = false;
+				mClickNumber = true;
+				mCanOperate = true;
 			}
 			else if(buttonText.equals(".")) {
 				mScreen.setValue(displayText + buttonText);
 				mClearScreen = false;
+				mCanOperate = true;
 			}
 			else {
+				double result = 0;
 				mClearScreen = true;
 				
 				double displayValue = 0;
@@ -116,35 +123,58 @@ public class CalculatorView {
 				catch(NumberFormatException e) {
 				}
 				
-				if(buttonText.equals("+")) {
-					result = mCalculator.add(displayValue);
-				}
-				else if(buttonText.equals("-")) {
-					result = mCalculator.sub(displayValue);
-				}
-				else if(buttonText.equals("*")) {
-					result = mCalculator.mul(displayValue);
-				}
-				else if(buttonText.equals("/")) {
-					result = mCalculator.div(displayValue);
-				}
-				else if(buttonText.equals("%")) {
+				if(buttonText.equals("%")) {
 					result = mCalculator.percent(displayValue);
-				}
-				else if(buttonText.equals("+/-")) {
-					if(displayValue != 0) {
-						result = -displayValue;
-						mClearScreen = false;
-					}
+					mClickNumber = false;
+					mCanOperate = true;
 				}
 				else if(buttonText.equals("C")) {
 					result = mCalculator.clear();
+					mCanOperate = false;
+					mClickNumber = false;
 				}
 				else if(buttonText.equals("CE")) {
 					result = 0;
 				}
 				else if(buttonText.equals("=")) {
 					result = mCalculator.equals(displayValue);
+					mCanOperate = false;
+					mClickNumber = false;
+				}
+				else if(buttonText.equals("+/-")) {
+					if(displayValue != 0) {
+						result = -displayValue;
+					}
+					if(mClickNumber) {
+						mClearScreen = false;
+					}
+					else {
+						mClearScreen = true;
+					}
+					mCanOperate = true;
+				}
+				else {
+					mClickNumber = false;
+					
+					if(mCanOperate) {
+						mCanOperate = false;
+					
+						if(buttonText.equals("+")) {
+							result = mCalculator.add(displayValue);
+						}
+						else if(buttonText.equals("-")) {
+							result = mCalculator.sub(displayValue);
+						}
+						else if(buttonText.equals("*")) {
+							result = mCalculator.mul(displayValue);
+						}
+						else if(buttonText.equals("/")) {
+							result = mCalculator.div(displayValue);
+						}
+					}
+					else {
+						result = displayValue;
+					}
 				}
 				
 				if((result - (int)result) == 0.0) {
@@ -159,8 +189,6 @@ public class CalculatorView {
 	};
 	
 	private class CustomButton extends TextButton {
-		
-		private final String kSIZE = "40";
 		
 		public CustomButton(String title, SelectHandler handler) {
 			super(title, handler);

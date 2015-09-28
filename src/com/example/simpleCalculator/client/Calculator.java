@@ -4,7 +4,7 @@ package com.example.simpleCalculator.client;
 public class Calculator {
 	
 	private enum Operation {
-		NONE, ADD, SUB, MUL, DIV, PERCENT
+		NONE, ADD, SUB, MUL, DIV
 	};
 	
 	private Double mValue = null;
@@ -42,9 +42,8 @@ public class Calculator {
 	}
 	
 	public double percent(double v) {
-		prevOperation(v);
-		mOperation = Operation.PERCENT;
-		return mValue;
+		double ret = v/mValue;
+		return ret;
 	}
 	
 	public double clear() {
@@ -67,7 +66,7 @@ public class Calculator {
 		
 		switch(mOperation) {
 		case NONE:
-			ret = a;
+			ret = b;
 			break;
 		case ADD:
 			ret = a+b;
@@ -81,35 +80,8 @@ public class Calculator {
 		case DIV:
 			ret = a/b;
 			break;
-		case PERCENT:
-			ret = a%b;
-			break;
 		}
 	
 		return ret;
 	}
-	
-//	public double inputNumber(double v) {
-////		switch(mOperation) {
-////		case NONE:
-////			break;
-////		case ADD:
-////			mValue += v;
-////			break;
-////		case SUB:
-////			mValue -= v;
-////			break;
-////		case MUL:
-////			mValue *= v;
-////			break;
-////		case DIV:
-////			mValue /= v;
-////			break;
-////		case PERCENT:
-////			mValue %= v;
-////			break;
-////		}
-//		
-//		return v;
-//	}
 }
