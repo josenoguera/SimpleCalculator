@@ -44,7 +44,7 @@ public class ConvertServiceImpl extends RemoteServiceServlet implements ConvertS
 			@SuppressWarnings("unchecked")
 			List<Conversion> list = (List<Conversion>) pm.newQuery(query).execute();
 			
-			SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd hh:mm:ss.SSS");
+			SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss");
 			for(Conversion conv : list) {
 				history.add(new ConversionClient(format.format(conv.getTimestamp()), conv.getDecimal(), conv.getBinary()));
 			}

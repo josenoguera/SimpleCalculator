@@ -33,6 +33,6 @@ public class ConversionClient implements Serializable {
 	  
 	  @Override
 		public String toString() {
-			return new String(this.getTimestamp() +  ": " + this.getDecimal() + " -> " + this.getBinary());
+			return new String(this.getTimestamp() +  "> " + this.getDecimal() + " -> " + this.getBinary());
 		}
 }

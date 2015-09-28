@@ -170,7 +170,7 @@ public class CalculatorView {
 				}
 				else if(buttonText.equals("=")) {
 					result = mCalculator.equals(displayValue);
-					mCanOperate = false;
+					mCanOperate = true;
 					mClickNumber = false;
 				}
 				else if(buttonText.equals("+/-")) {

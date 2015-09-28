@@ -3,3 +3,4 @@ war/simplecalculator/
 war/WEB-INF/deploy/
 war/WEB-INF/classes/
 .gwt/
+war/WEB-INF/appengine-generated/

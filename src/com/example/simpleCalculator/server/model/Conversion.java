@@ -45,10 +45,10 @@ public class Conversion {
 	 
 	@Override
 	public String toString() {
-		SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd hh:mm:ss.SSS");
+		SimpleDateFormat format = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss.SSS");
 		String dateString = format.format(this.timestamp);
 		
-		return new String("\"" + dateString + "\"" + this.getDecimal() + "\"" + this.getBinary());
+		return new String("\"" + dateString + "\",\"" + this.getDecimal() + "\",\"" + this.getBinary() + "\"");
 	}
 	
 	private String convertToBinary(String decimal) {
