@@ -54,7 +54,7 @@ public class Conversion {
 	private String convertToBinary(String decimal) {
 		String ret = "";
 		try {
-			int dec = Integer.valueOf(decimal);
+			int dec = Double.valueOf(decimal).intValue();
 			ret = String.format("%8s", Integer.toBinaryString(dec)).replace(' ', '0');
 		}
 		catch(NumberFormatException e) {
