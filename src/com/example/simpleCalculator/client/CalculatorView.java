@@ -1,5 +1,7 @@
 package com.example.simpleCalculator.client;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -17,21 +19,26 @@ public class CalculatorView {
 	
 	private final String kSIZE = "40";
 	
-	private TextField mScreen;
+	private TextField mDisplay, mDisplayBinary;
 	private Calculator mCalculator = new Calculator();
 	private boolean mClearScreen = true;
 	private boolean mClickNumber = false;
 	private boolean mCanOperate = false;
 	
+	/**
+	 * Create a remote service proxy to talk to the server-side Convert service.
+	 */
+	private final ConvertServiceAsync mConvertService = GWT.create(ConvertService.class);
+	
 	public Widget CreateView() {
 
 		VerticalPanel vertical = new VerticalPanel();
 		
-		mScreen = new TextField();
-		mScreen.setEnabled(false);
-		mScreen.setSize("200", kSIZE);
-		mScreen.setValue("0");
-		vertical.add(mScreen);
+		mDisplay = new TextField();
+		mDisplay.setEnabled(false);
+		mDisplay.setSize("200", kSIZE);
+		mDisplay.setValue("0");
+		vertical.add(mDisplay);
 				
 		HorizontalPanel horizontal = new HorizontalPanel();
 		horizontal.add(new CustomButton("7", mSelectHandler));
@@ -66,10 +73,21 @@ public class CalculatorView {
 		horizontal.add(new CustomButton("CE", mSelectHandler));
 		vertical.add(horizontal);
 		
+		horizontal = new HorizontalPanel();
+		TextButton b = new TextButton("Convert to binary", mConvertHandler);
+		b.setSize("100", kSIZE);
+		horizontal.add(b);
+		mDisplayBinary = new TextField();
+		mDisplayBinary.setEnabled(false);
+		mDisplayBinary.setSize("100", kSIZE);
+		mDisplayBinary.setValue("");
+		horizontal.add(mDisplayBinary);
+		vertical.add(horizontal);
+		
 		FramedPanel frame = new FramedPanel();
 		frame.setButtonAlign(BoxLayoutPack.CENTER); // Center
 		frame.setHeadingText("Simple Calculator");
-		frame.setPixelSize(220, 250);
+		frame.setPixelSize(220, 290);
 		frame.addStyleName("white-bg");
 		frame.add(new HTML());
 		frame.getElement().setMargins(new Margins(5));
@@ -94,21 +112,21 @@ public class CalculatorView {
 				isNumber = false;
 			}
 			
-			String displayText = mScreen.getValue();
+			String displayText = mDisplay.getValue();
 
 			if(isNumber) {
 				if(mClearScreen) {
-					mScreen.setValue(buttonText);
+					mDisplay.setValue(buttonText);
 				}
 				else {
-					mScreen.setValue(displayText + buttonText);
+					mDisplay.setValue(displayText + buttonText);
 				}
 				mClearScreen = false;
 				mClickNumber = true;
 				mCanOperate = true;
 			}
 			else if(buttonText.equals(".")) {
-				mScreen.setValue(displayText + buttonText);
+				mDisplay.setValue(displayText + buttonText);
 				mClearScreen = false;
 				mCanOperate = true;
 			}
@@ -178,13 +196,30 @@ public class CalculatorView {
 				}
 				
 				if((result - (int)result) == 0.0) {
-					mScreen.setValue(String.valueOf((int)result));
+					mDisplay.setValue(String.valueOf((int)result));
 				}
 				else {
-					mScreen.setValue(String.valueOf(result));
+					mDisplay.setValue(String.valueOf(result));
 				}
 			}
 			
+		}
+	};
+	
+	private SelectHandler mConvertHandler = new SelectHandler() {
+		@Override
+		public void onSelect(SelectEvent event) {
+			
+			mConvertService.convertToBinary(mDisplay.getValue(), new AsyncCallback<String>() {
+				public void onFailure(Throwable caught) {
+					// Show the RPC error message to the user
+					mDisplayBinary.setValue("Remote Procedure Call - Failure");
+				}
+
+				public void onSuccess(String result) {
+					mDisplayBinary.setValue(result);
+				}
+			});
 		}
 	};
 	

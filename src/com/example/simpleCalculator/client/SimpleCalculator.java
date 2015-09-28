@@ -164,17 +164,6 @@ public class SimpleCalculator implements EntryPoint {
 		
 		RootPanel root = RootPanel.get();
 		
-		TextButton textButton = new TextButton("Verify GXT Works");
-		root.add(textButton);
-		textButton.addSelectHandler(new SelectHandler() {
-		  @Override
-		  public void onSelect(SelectEvent event) {
-		    MessageBox messageBox = new MessageBox("GXT Works.");
-		    messageBox.show();
-		  }
-		});
-		
-		
 	    mCalculatorView = new CalculatorView();
 	    root.add(mCalculatorView.CreateView());
 	}

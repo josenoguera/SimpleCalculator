@@ -16,6 +16,16 @@
     <url-pattern>/simplecalculator/greet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>convertServlet</servlet-name>
+    <servlet-class>com.example.simpleCalculator.server.ConvertServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>convertServlet</servlet-name>
+    <url-pattern>/simplecalculator/convert</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>SimpleCalculator.html</welcome-file>
