@@ -20,7 +20,7 @@ public class ConvertServiceImpl extends RemoteServiceServlet implements ConvertS
 		      JDOHelper.getPersistenceManagerFactory("transactions-optional");
 	
 	public String convertToBinary(String decimal) throws IllegalStateException {
-		Conversion conv = new Conversion(decimal);
+		Conversion conv = new Conversion(escapeHtml(decimal));
 
 		PersistenceManager pm = getPersistenceManager();
 		try {
@@ -62,4 +62,19 @@ public class ConvertServiceImpl extends RemoteServiceServlet implements ConvertS
 	private PersistenceManager getPersistenceManager() {
 		return PMF.getPersistenceManager();
 	}
+	
+    /**
+     * Escape an html string. Escaping data received from the client helps to
+     * prevent cross-site script vulnerabilities.
+     * 
+     * @param html the html string to escape
+     * @return the escaped string
+     */
+    private String escapeHtml(String html) {
+        if (html == null) {
+            return null;
+        }
+        return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
 }
